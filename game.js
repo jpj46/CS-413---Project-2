@@ -37,9 +37,10 @@ const backStyle = new PIXI.TextStyle({ fontSize: 25,
                                             fill: '#ffffff' });
         
 // End game title        
-const backStyle = new PIXI.TextStyle({ fontSize: 75,
+const endStyle = new PIXI.TextStyle({ fontSize: 50,
                                             fontFamily: 'Calibri', 
                                             fontWeight: 'bold',
+                                            align: 'center',
                                             fill: '#ffffff' });
                                             
 
@@ -82,7 +83,7 @@ function createScreens()
 {
    // Add background and character
    maze.addChild(maze_bkg);
-   spider.position.x = 496 + 64 + 32;
+   spider.position.x = 496;
    spider.position.y = 16;
    maze.addChild(spider);
    
@@ -90,6 +91,7 @@ function createScreens()
    var gameTitleText = new PIXI.Text( "Escape\nthe maze!", titleStyle );
    var gameInstructTitleText = new PIXI.Text( "Instructions", titleStyle );
    var gameCreditTitleText = new PIXI.Text( "Credits", titleStyle );
+   var gameEndText = new PIXI.Text( "Game over!\nYou win!", endStyle );
 
    // Text for title screen options
    var gameStartText = new PIXI.Text( "Start", selectionStyle );
@@ -97,7 +99,8 @@ function createScreens()
    var gameCredText = new PIXI.Text( "Credits", selectionStyle );
    var gameCredBackText = new PIXI.Text( "<- Back", backStyle );
    var gameInstructBackText = new PIXI.Text( "<- Back", backStyle );
-   var gameStartText = new PIXI.Text( "Start", selectionStyle );
+   var gameRestartText = new PIXI.Text( "Play again", selectionStyle );
+   var gameReturnTitleText = new PIXI.Text( "Back to title screen", selectionStyle );
    
    // Adds regular text
    var gameInstructDesc = new PIXI.Text( "The goal of the game is to navigate\n" + 
@@ -106,12 +109,16 @@ function createScreens()
    var gameCredDesc = new PIXI.Text( "Author: John Jacobelli\nRenderer used: PixiJS", 
       selectionStyle );
    
-   // Declare texts interactable and their functions
+   // Declare texts interactable
    gameStartText.interactive = true;
    gameInstructText.interactive = true;
    gameCredText.interactive = true;
    gameCredBackText.interactive = true;
    gameInstructBackText.interactive = true;
+   gameRestartText.interactive = true;
+   gameReturnTitleText.interactive = true;
+   
+   // Declares interactable text functions
    gameStartText.click = function(event) { startScreen.visible = false; }
    gameInstructText.click = function(event) { instructScreen.visible = true;
                                               startScreen.visible = false; }
@@ -120,7 +127,14 @@ function createScreens()
    gameCredBackText.click = function(event) { startScreen.visible = true;
                                               creditScreen.visible = false; }
    gameInstructBackText.click = function(event) { startScreen.visible = true;
-                                              instructScreen.visible = false; }
+                                                  instructScreen.visible = false; }
+   gameRestartText.click = function(event) { endScreen.visible = false;
+                                             spider.position.x = 496;
+                                             spider.position.y = 16; }
+   gameReturnTitleText.click = function(event) { startScreen.visible = true;
+                                                 endScreen.visible = false; 
+                                                 spider.position.x = 496;
+                                                 spider.position.y = 16; }
    
    // Create backgrounds for screens screen
    var graphics = new PIXI.Graphics();
@@ -158,7 +172,9 @@ function createScreens()
    creditScreen.addChild( gameCredBackText );
    creditScreen.addChild( gameCreditTitleText );
    creditScreen.addChild( gameCredDesc );
-   
+   endScreen.addChild( gameEndText );
+   endScreen.addChild( gameRestartText );
+   endScreen.addChild( gameReturnTitleText );
    
    // Set anchors for text
    gameTitleText.anchor.set( .5 );
@@ -169,6 +185,9 @@ function createScreens()
    gameInstructBackText.anchor.set( 1 );
    gameCredBackText.anchor.set( 1 );
    gameCreditTitleText.anchor.set( .5 );
+   gameEndText.anchor.set( .5 );
+   gameRestartText.anchor.set( .5 );
+   gameReturnTitleText.anchor.set( .5 );
 
    // Place Text
    gameTitleText.x = renderer.width/2; gameTitleText.y = renderer.height/4;
@@ -181,6 +200,9 @@ function createScreens()
    gameCredDesc.x = 25; gameCredDesc.y = renderer.height/2;
    gameInstructBackText.x = 635; gameInstructBackText.y = 635;
    gameCredBackText.x = 635; gameCredBackText.y = 635;
+   gameEndText.x = renderer.width/2; gameEndText.y = renderer.height/3 + 10;
+   gameRestartText.x = renderer.width/2; gameRestartText.y = renderer.height/2 + 20;
+   gameReturnTitleText.x = renderer.width/2; gameReturnTitleText.y = renderer.height/2 + 70;
    
 }
 

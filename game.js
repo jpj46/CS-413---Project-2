@@ -5,38 +5,47 @@ var renderer = PIXI.autoDetectRenderer({ width: 640,
                                          backgroundColor: 0x999999 });
 gameport.appendChild( renderer.view );
 
+// -------------------- CONTAINERS ----------------------------------------------------
 // Add containers
 var startScreen = new PIXI.Container();
 var instructScreen = new PIXI.Container();
 var creditScreen = new PIXI.Container();
 var endScreen = new PIXI.Container();
+var maze = new PIXI.Container();
 var stage = new PIXI.Container();
 var spider = new PIXI.Sprite( PIXI.Texture.fromImage( "Spider sprite.png" ) );
 var maze_bkg = new PIXI.Sprite( PIXI.Texture.fromImage( "Maze.png" ) );
 
+
+// -------------------- STYLES ----------------------------------------------------
 // Texts that are titles on screens
 const titleStyle = new PIXI.TextStyle({ fontSize: 100,
                                         fontWeight: 'bold',
                                         fontFamily: 'Calibri',
-                                        fill: '#ffffff' });
+                                        fill: '#ffffff',
+                                        align: 'center' });
 
 // Texts that are options on a screen
 const selectionStyle = new PIXI.TextStyle({ fontSize: 40,
                                             fontFamily: 'Calibri', 
                                             fill: '#ffffff' });
                                             
-                                            // Texts that are options on a screen
+// Back "buttons"
 const backStyle = new PIXI.TextStyle({ fontSize: 25,
                                             fontFamily: 'Calibri', 
                                             fontWeight: 'bold',
                                             fill: '#ffffff' });
+        
+// End game title        
+const backStyle = new PIXI.TextStyle({ fontSize: 75,
+                                            fontFamily: 'Calibri', 
+                                            fontWeight: 'bold',
+                                            fill: '#ffffff' });
+                                            
 
-// Create the maze and add it to the stage
-// Add maze background
-var maze = new PIXI.Container();
+// -------------------- SCREENS AND ANIMATION ----------------------------------------------------                                            
+// Add screens to stage and their visibility
 stage.addChild(maze);
-maze.addChild(maze_bkg);
-
 stage.addChild(startScreen);
 stage.addChild(instructScreen);
 stage.addChild(creditScreen);
@@ -45,33 +54,40 @@ instructScreen.visible = false;
 creditScreen.visible = false;
 endScreen.visible = false;
 
-// Add the spider to the stage
-spider.position.x = 496;
-spider.position.y = 16;
-maze.addChild(spider);
-
 // Create walls and start screen
 var wallList = [];
+createScreens();
 drawLines();
-createStartScreen();
 
 // Animate the sprite
 animate();
 
+
+// -------------------- FUNCTIONS ----------------------------------------------------
 // Animates the stage
 function animate() 
 {  
    renderer.render( stage );
    requestAnimationFrame( animate );
    
-   document.addEventListener( 'keydown', keyPressEventHandler );
+   
+   if( endScreen.visible == false )
+   { document.addEventListener( 'keydown', keyPressEventHandler ); }
+   else 
+   { document.removeEventListener( 'keydown', keyPressEventHandler ); }
 }
 
 // Adds elements to start screen
-function createStartScreen()
+function createScreens()
 {
+   // Add background and character
+   maze.addChild(maze_bkg);
+   spider.position.x = 496 + 64 + 32;
+   spider.position.y = 16;
+   maze.addChild(spider);
+   
    // Text for titles
-   var gameTitleText = new PIXI.Text( "Maze!", titleStyle );
+   var gameTitleText = new PIXI.Text( "Escape\nthe maze!", titleStyle );
    var gameInstructTitleText = new PIXI.Text( "Instructions", titleStyle );
    var gameCreditTitleText = new PIXI.Text( "Credits", titleStyle );
 
@@ -81,12 +97,13 @@ function createStartScreen()
    var gameCredText = new PIXI.Text( "Credits", selectionStyle );
    var gameCredBackText = new PIXI.Text( "<- Back", backStyle );
    var gameInstructBackText = new PIXI.Text( "<- Back", backStyle );
+   var gameStartText = new PIXI.Text( "Start", selectionStyle );
    
    // Adds regular text
    var gameInstructDesc = new PIXI.Text( "The goal of the game is to navigate\n" + 
       "the maze and make it to the end!\n\nThe character is moved using the\narrow " + 
       "keys. Move the character to\nthe end of the maze to win.", selectionStyle );
-   var gameCredDesc = new PIXI.Text( "Author: John Jacobelli\nRenderer used - PixiJS", 
+   var gameCredDesc = new PIXI.Text( "Author: John Jacobelli\nRenderer used: PixiJS", 
       selectionStyle );
    
    // Declare texts interactable and their functions
@@ -126,7 +143,7 @@ function createStartScreen()
    
    var graphics3 = new PIXI.Graphics();
    graphics3.beginFill(0x000000);
-   graphics3.drawRect(0, 0, 640, 640);
+   graphics3.drawRect(160, 160, 320, 320);
    graphics3.endFill();
    endScreen.addChild(graphics3);
 
@@ -139,7 +156,9 @@ function createStartScreen()
    instructScreen.addChild( gameInstructDesc );
    instructScreen.addChild( gameInstructBackText );
    creditScreen.addChild( gameCredBackText );
+   creditScreen.addChild( gameCreditTitleText );
    creditScreen.addChild( gameCredDesc );
+   
    
    // Set anchors for text
    gameTitleText.anchor.set( .5 );
@@ -149,6 +168,7 @@ function createStartScreen()
    gameInstructTitleText.anchor.set( .5 );
    gameInstructBackText.anchor.set( 1 );
    gameCredBackText.anchor.set( 1 );
+   gameCreditTitleText.anchor.set( .5 );
 
    // Place Text
    gameTitleText.x = renderer.width/2; gameTitleText.y = renderer.height/4;
@@ -157,10 +177,11 @@ function createStartScreen()
    gameCredText.x = renderer.width/6 * 5; gameCredText.y = renderer.height/4 * 3;
    gameInstructTitleText.x = renderer.width/2; gameInstructTitleText.y = renderer.height/4;
    gameInstructDesc.x = 25; gameInstructDesc.y = renderer.height/2;
+   gameCreditTitleText.x = renderer.width/2; gameCreditTitleText.y = renderer.height/4;
+   gameCredDesc.x = 25; gameCredDesc.y = renderer.height/2;
    gameInstructBackText.x = 635; gameInstructBackText.y = 635;
    gameCredBackText.x = 635; gameCredBackText.y = 635;
-   gameCreditTitleText.x = renderer.width/2; gameInstructTitleText.y = renderer.height/4;
-   gameCredDesc.x = 25; gameInstructDesc.y = renderer.height/2;
+   
 }
 
 
@@ -2935,13 +2956,19 @@ function keyPressEventHandler( key )
       // Prevent key from scrolling
       key.preventDefault();
       
+      if( spider.x == 608 && spider.y - 16 == 0 )
+      {
+         spider.y -= 16;
+         endScreen.visible = true;
+      }
+      
       // If up arrow is pressed, move the player up (unless it will take
       // the user out of bounds! (off stage)
       if( spider.y >= 32 ) 
       {
          if( !testWallCollision( spider, wallList, key.keyCode ) )
          {
-            spider.position.y -= 16;
+            spider.y -= 16;
          }
       }
    }
@@ -2954,7 +2981,7 @@ function keyPressEventHandler( key )
       {
          if( !testWallCollision( spider, wallList, key.keyCode ) )
          {
-            spider.position.y += 16;
+            spider.y += 16;
          }
       }
    }
@@ -2967,7 +2994,7 @@ function keyPressEventHandler( key )
       {
          if( !testWallCollision( spider, wallList, key.keyCode ) )
          {
-            spider.position.x -= 16;
+            spider.x -= 16;
          }
       }
    }
@@ -2980,7 +3007,7 @@ function keyPressEventHandler( key )
       {
          if( !testWallCollision( spider, wallList, key.keyCode ) )
          {
-            spider.position.x += 16;
+            spider.x += 16;
          }
       }
    }

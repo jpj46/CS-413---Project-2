@@ -5,15 +5,20 @@ var renderer = PIXI.autoDetectRenderer({ width: 640,
                                          backgroundColor: 0x999999 });
 gameport.appendChild( renderer.view );
 
+
 // -------------------- CONTAINERS ----------------------------------------------------
-// Add containers
+// Add containers and sprites
 var startScreen = new PIXI.Container();
 var instructScreen = new PIXI.Container();
 var creditScreen = new PIXI.Container();
 var endScreen = new PIXI.Container();
 var maze = new PIXI.Container();
 var stage = new PIXI.Container();
-var spider = new PIXI.Sprite( PIXI.Texture.fromImage( "Spider sprite.png" ) );
+var spiderTexDef = PIXI.Texture.fromImage( "Spider sprite.png" );
+var spiderTexUp = PIXI.Texture.fromImage( "Spider sprite up.png" );
+var spiderTexRight = PIXI.Texture.fromImage( "Spider sprite right.png" );
+var spiderTexLeft = PIXI.Texture.fromImage( "Spider sprite left.png" );
+var spider = new PIXI.Sprite( spiderTexDef );
 var maze_bkg = new PIXI.Sprite( PIXI.Texture.fromImage( "Maze.png" ) );
 
 
@@ -2977,6 +2982,7 @@ function keyPressEventHandler( key )
    {
       // Prevent key from scrolling
       key.preventDefault();
+      spider.texture = spiderTexUp;
       
       if( spider.x == 608 && spider.y - 16 == 0 )
       {
@@ -2999,6 +3005,7 @@ function keyPressEventHandler( key )
    if ( key.keyCode === 40 ) 
    {
       key.preventDefault();
+      spider.texture = spiderTexDef;
       if( spider.y < renderer.height - 32 ) 
       {
          if( !testWallCollision( spider, wallList, key.keyCode ) )
@@ -3012,6 +3019,7 @@ function keyPressEventHandler( key )
    if( key.keyCode === 37 ) 
    {
       key.preventDefault();
+      spider.texture = spiderTexLeft;
       if ( spider.x >= 32 ) 
       {
          if( !testWallCollision( spider, wallList, key.keyCode ) )
@@ -3025,6 +3033,7 @@ function keyPressEventHandler( key )
    if( key.keyCode === 39 ) 
    {
       key.preventDefault();
+      spider.texture = spiderTexRight;
       if( spider.x < renderer.width - 32) 
       {
          if( !testWallCollision( spider, wallList, key.keyCode ) )

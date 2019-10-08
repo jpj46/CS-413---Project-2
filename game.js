@@ -5,6 +5,10 @@ var renderer = PIXI.autoDetectRenderer({ width: 640,
                                          backgroundColor: 0x999999 });
 gameport.appendChild( renderer.view );
 
+// Unpack sprite sheet
+PIXI.loader
+   .add("assets.json")
+   .load();
 
 // -------------------- CONTAINERS ----------------------------------------------------
 // Add containers and sprites
@@ -14,10 +18,10 @@ var creditScreen = new PIXI.Container();
 var endScreen = new PIXI.Container();
 var maze = new PIXI.Container();
 var stage = new PIXI.Container();
-var spiderTexDef = PIXI.Texture.fromImage( "Spider sprite.png" );
-var spiderTexUp = PIXI.Texture.fromImage( "Spider sprite up.png" );
-var spiderTexRight = PIXI.Texture.fromImage( "Spider sprite right.png" );
-var spiderTexLeft = PIXI.Texture.fromImage( "Spider sprite left.png" );
+var spiderTexDef = PIXI.Texture.fromFrame( "Spider sprite.png" );
+var spiderTexUp = PIXI.Texture.fromFrame( "Spider sprite up.png" );
+var spiderTexRight = PIXI.Texture.fromFrame( "Spider sprite right.png" );
+var spiderTexLeft = PIXI.Texture.fromFrame( "Spider sprite left.png" );
 var spider = new PIXI.Sprite( spiderTexDef );
 var maze_bkg = new PIXI.Sprite( PIXI.Texture.fromImage( "Maze.png" ) );
 
@@ -208,7 +212,6 @@ function createScreens()
    gameEndText.x = renderer.width/2; gameEndText.y = renderer.height/3 + 10;
    gameRestartText.x = renderer.width/2; gameRestartText.y = renderer.height/2 + 20;
    gameReturnTitleText.x = renderer.width/2; gameReturnTitleText.y = renderer.height/2 + 70;
-   
 }
 
 
